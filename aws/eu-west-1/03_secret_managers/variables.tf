@@ -1,0 +1,13 @@
+variable "prefix" {}
+variable "name" {}
+variable "owner" {}
+variable "environment" {}
+variable "region" {}
+variable "vpc_cidr" {}
+variable "ManagedBy" {}
+variable "ami_type" {}
+variable "instance_types" {}
+variable "eks_min_size" {}
+variable "eks_max_size" {}
+variable "eks_desired_size" {}
+variable "eks_nodes_disk_size" {}
