@@ -2,7 +2,7 @@
 **/.terraform/*
 aws/.DS_Store
 .DS_Store
-
+.idea/
 # .tfstate files
 *.tfstate
 *.tfstate.*
