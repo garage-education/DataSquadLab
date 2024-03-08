@@ -38,6 +38,10 @@ module "eks" {
       })
     }
     ### aws-ebs-csi-driver
+    aws-ebs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
+    }
   }
 
   vpc_id                   = data.terraform_remote_state.vpc.outputs.vpc_id
@@ -47,8 +51,8 @@ module "eks" {
   ## additional iam policy
 
   eks_managed_node_group_defaults = {
-    ami_type       = "AL2_ARM_64"
-    instance_types = ["t4g.medium"]
+    ami_type       = var.ami_type
+    instance_types = [var.instance_types]
     iam_role_attach_cni_policy = true
   }
 
