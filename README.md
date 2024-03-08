@@ -30,6 +30,8 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 
 ## Questions
 - [ ] Should we have one account for dev, uat, and prod?
+- [ ] How to do inplace modification for critical usecases? Ex. Change storage for the database
+- [ ] Can we use advanced analytics window functions on mongo DB?
 
 ## AWS Deployment
 ### Architecture Design
@@ -59,17 +61,16 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 	- [x] Logs
 - [ ] RDS
 	- [ ] Secret manager
-	- [ ] Parameter groups
-	- [ ] Security groups
-	- [ ] Postgres
+	- [x] Parameter groups
+	- [x] Security groups
+	- [x] Postgres
 	- [ ] BE Database
 - [ ] Secret Manager
 	- [ ] Rotate secrets
-- [ ] EKS
-	- [ ] VPC-CNI
-	- [ ] IRSA
-	- [ ] EBS-CSI
-	- [ ] Node Group
+- [x] EKS
+	- [x] VPC-CNI and IRSA
+	- [x] Node Group
+	- [ ] EBS-CSI and IRSA
 - [ ] Applications
 	- [ ] External Secret Operator
 	- [ ] Nginx Ingress
