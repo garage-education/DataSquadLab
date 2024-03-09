@@ -3,28 +3,25 @@ resource "helm_release" "nginx_ingress" {
   repository       = "https://kubernetes.github.io/ingress-nginx"
   chart            = "ingress-nginx"
   namespace        = "ingress-nginx"
-  version          = "4.10.0"
+  version          = "4.9.1"
   create_namespace = true
   atomic           = true
 
   values = [
-    "${file("helm_values/ingress-nginx.yaml")}"
+    file("helm_values/ingress-nginx.yaml")
   ]
-
 }
-
+###
 resource "helm_release" "argo_cd" {
   name             = "argo-cd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   namespace        = "argocd"
-  version          = "6.6.0"
+  version          = "5.54.0"
   create_namespace = true
-
   values = [
-    "${file("helm_values/argocd.yaml")}"
+    file("helm_values/argocd.yaml")
   ]
-
 }
 
 resource "helm_release" "cert_manager" {
@@ -36,7 +33,7 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
 
   values = [
-    "${file("helm_values/cert-manager.yaml")}"
+    file("helm_values/cert-manager.yaml")
   ]
 }
 
