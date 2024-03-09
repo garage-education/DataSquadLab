@@ -70,12 +70,12 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 - [x] EKS
 	- [x] VPC-CNI and IRSA
 	- [x] Node Group
-	- [ ] EBS-CSI and IRSA
+	- [x] EBS-CSI and IRSA
 - [ ] Applications
 	- [ ] External Secret Operator
-	- [ ] Nginx Ingress
-	- [ ] Cert-Manager
-	- [ ] ArgoCD
+	- [x] Nginx Ingress
+	- [x] Cert-Manager
+	- [x] ArgoCD
 	- [ ] Grafana
 	- [ ] Prometheus
 	- [ ] Loki
