@@ -17,4 +17,4 @@ configs:
   cm:
     # -- Create the argocd-cm configmap for [declarative setup]
     create: true
-    url: "https://argocd.prod.infra.disco-anywhere.com"
+    url: "https://argocd.prod.infra.garageeducation.com"
