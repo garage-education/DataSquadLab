@@ -3,7 +3,7 @@
 ################################################################################
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
+  version = "20.8.3"
 
   cluster_name                    = local.name_prefix
   cluster_version                 = local.cluster_version
