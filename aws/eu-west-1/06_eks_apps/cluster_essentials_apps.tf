@@ -11,18 +11,6 @@ resource "helm_release" "nginx_ingress" {
     file("helm_values/ingress-nginx.yaml")
   ]
 }
-###
-resource "helm_release" "argo_cd" {
-  name             = "argo-cd"
-  repository       = "https://argoproj.github.io/argo-helm"
-  chart            = "argo-cd"
-  namespace        = "argocd"
-  version          = "5.54.0"
-  create_namespace = true
-  values = [
-    file("helm_values/argocd.yaml")
-  ]
-}
 
 resource "helm_release" "cert_manager" {
   name             = "cert-manager"
@@ -37,31 +25,16 @@ resource "helm_release" "cert_manager" {
   ]
 }
 
-### clusterissuer
-resource "kubernetes_manifest" "clusterissuer_letsencrypt_production" {
-  manifest = {
-    "apiVersion" = "cert-manager.io/v1"
-    "kind"       = "ClusterIssuer"
-    "metadata" = {
-      "name" = "letsencrypt-production"
-    }
-    "spec" = {
-      "acme" = {
-        "email" = "me@garageeducation.org"
-        "privateKeySecretRef" = {
-          "name" = "letsencrypt-production"
-        }
-        "server" = "https://acme-v02.api.letsencrypt.org/directory"
-        "solvers" = [
-          {
-            "http01" = {
-              "ingress" = {
-                "class" = "nginx"
-              }
-            }
-          },
-        ]
-      }
-    }
-  }
+#####
+resource "helm_release" "argo_cd" {
+  depends_on       = [helm_release.nginx_ingress,helm_release.cert_manager,kubernetes_manifest.clusterissuer_letsencrypt_production]
+  name             = "argo-cd"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-cd"
+  namespace        = "argocd"
+  version          = "5.54.0"
+  create_namespace = true
+  values           = [
+    file("helm_values/argocd.yaml")
+  ]
 }
