@@ -32,7 +32,7 @@ resource "helm_release" "argo_cd" {
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   namespace        = "argocd"
-  version          = "5.54.0"
+  version          = "6.7.2"
   create_namespace = true
   values           = [
     file("helm_values/argocd.yaml")
