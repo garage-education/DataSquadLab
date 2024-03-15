@@ -61,7 +61,7 @@ module "metabase_app_external_secret_irsa" {
   oidc_providers = {
     ex = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["petclinic:tf-datasquad-eks-metabase-sa"]
+      namespace_service_accounts = ["metabase:tf-datasquad-eks-metabase-sa"]
     }
   }
 
