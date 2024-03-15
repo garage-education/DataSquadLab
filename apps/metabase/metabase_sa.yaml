@@ -3,7 +3,7 @@ automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   name: tf-datasquad-eks-metabase-sa
-  namespace: petclinic
+  namespace: metabase
   annotations:
     eks.amazonaws.com/role-arn: "arn:aws:iam::730335474513:role/tf-datasquad-eks-metabase-app-irsa"
   labels:
