@@ -59,12 +59,12 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 	- [x] Landing zone
 	- [x] Archive
 	- [x] Logs
-- [ ] RDS
-	- [ ] Secret manager
+- [x] RDS
+	- [x] Secret manager
 	- [x] Parameter groups
 	- [x] Security groups
 	- [x] Postgres
-	- [ ] BE Database
+	- [x] BE Database
 - [ ] Secret Manager
 	- [ ] Rotate secrets
 - [x] EKS
@@ -72,16 +72,54 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 	- [x] Node Group
 	- [x] EBS-CSI and IRSA
 - [ ] Applications
-	- [ ] External Secret Operator
+	- [x] External Secret Operator
 	- [x] Nginx Ingress
 	- [x] Cert-Manager
 	- [x] ArgoCD
       - [ ] Configure external secret for admin password
-      - tfk8s: https://github.com/jrhouston/tfk8s
-      - ```sh kubectl get -n argocd applications.argoproj.io petclinic -o yaml | tfk8s --strip -o sample.tf```
-	- [ ] Grafana
+      - [x] tfk8s: https://github.com/jrhouston/tfk8s, to migration Argo to Terraform Manifest
+      ```sh kubectl get -n argocd applications.argoproj.io petclinic -o yaml | tfk8s --strip -o sample.tf```
+      - [ ] Configure Metabase 
+	- [x] Pet Clinic
+	- [x] Metabase
+      - [ ] Can we use helm?
+    - [ ] Automation Job for db creation.
+    ```yaml
+  # Example of Automation Job to create the db user. 
+	  apiVersion: batch/v1
+	  kind: Job
+	  metadata:
+	    name: create-postgres-db-user
+	  spec:
+	    template:
+	  	spec:
+	  	  containers:
+	  	  - name: init-postgres
+	  		image: postgres:alpine  # Replace with your preferred Postgres image
+	  		command: ["sh", "-c"]
+	  		args: ["psql -h postgres -U postgres -f /sql/init.sql"]
+	  		volumeMounts:
+	  		- name: sql-init
+	  		  mountPath: /sql
+	  	  volumes:
+	  	  - name: sql-init
+	  		configMap:
+	  		  name: postgres-init-sql
+	    restartPolicy: OnFailure  # Run the job only once and retry on failure
+	  ---
+	  # ConfigMap containing the SQL script
+	  apiVersion: v1
+	  kind: ConfigMap
+	  metadata:
+	    name: postgres-init-sql
+	  data:
+	    init.sql: |-
+	  	CREATE USER {{username}} WITH PASSWORD '{{password}}';
+	  	CREATE DATABASE {{database_name}} OWNER {{username}};
+	  	GRANT ALL PRIVILEGES ON DATABASE {{database_name}} TO {{username}};  	
+    ```
+  
+    - [ ] Grafana
 	- [ ] Prometheus
 	- [ ] Loki
-	- [ ] Pet Clinic
-	- [ ] Metabase
 	- [ ] Airflow
