@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db
+  labels:
+    app: db
+    app.kubernetes.io/instance: db
+    app.kubernetes.io/name: db

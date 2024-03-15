@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-client-pod
+  namespace: db
+spec:
+  containers:
+  - name: postgres-client
+    image: postgres
+    envFrom:
+      - secretRef:
+          name: tf-datasquad-rds-db-secret
+    command: ["sleep"]
+    args: ["infinity"]
