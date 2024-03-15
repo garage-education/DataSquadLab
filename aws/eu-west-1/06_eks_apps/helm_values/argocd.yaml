@@ -13,3 +13,5 @@ notifications:
 configs:
   params:
     server.insecure: true
+  secret: #TODO: update secret manager
+    argocdServerAdminPassword: "$2a$10$VHMX5USGeocoDwM6y7THC.ZaeFmUFI3VCIcUUlmgRNtooNpMxbq7W"

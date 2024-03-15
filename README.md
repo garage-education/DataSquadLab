@@ -76,10 +76,12 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 	- [x] Nginx Ingress
 	- [x] Cert-Manager
 	- [x] ArgoCD
+      - [ ] Configure external secret for admin password
+      - tfk8s: https://github.com/jrhouston/tfk8s
+      - ```sh kubectl get -n argocd applications.argoproj.io petclinic -o yaml | tfk8s --strip -o sample.tf```
 	- [ ] Grafana
 	- [ ] Prometheus
 	- [ ] Loki
 	- [ ] Pet Clinic
 	- [ ] Metabase
 	- [ ] Airflow
-
