@@ -25,7 +25,7 @@ resource "helm_release" "cert_manager" {
   ]
 }
 
-#####
+####
 resource "helm_release" "argo_cd" {
   depends_on       = [helm_release.nginx_ingress,helm_release.cert_manager,kubernetes_manifest.clusterissuer_letsencrypt_production]
   name             = "argo-cd"
@@ -37,4 +37,16 @@ resource "helm_release" "argo_cd" {
   values           = [
     file("helm_values/argocd.yaml")
   ]
+}
+
+##eso
+resource "helm_release" "eso" {
+  name             = "external-secrets"
+  chart            = "external-secrets"
+  namespace        = "external-secrets"
+  repository       = "https://charts.external-secrets.io"
+  version          = "0.9.11"
+  timeout          = 300
+  atomic           = true
+  create_namespace = true
 }
