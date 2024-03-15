@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/instance: petclinic
+    app.kubernetes.io/name: petclinic
+  name: petclinic-servicemonitor
+  namespace: petclinic
+spec:
+  endpoints:
+  - interval: 30s
+    path: /actuator/prometheus
+    port: petclinic
+  jobLabel: ""
+  namespaceSelector:
+    matchNames:
+    - petclinic
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: petclinic
+      app.kubernetes.io/name: petclinic
