@@ -55,7 +55,7 @@ spec:
             value: "9191"
         envFrom:
           - secretRef:
-              name: tf-datasquad-eks-metabase-db-secret
+              name: tf-metabase-db-secret
         ports:
         - containerPort: 3000
         volumeMounts:
