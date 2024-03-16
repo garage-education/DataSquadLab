@@ -8,7 +8,7 @@ resource "kubernetes_manifest" "application_argocd_metabase_secret" {
     }
     "spec" = {
       "destination" = {
-        "namespace" = "met"
+        "namespace" = "metabase"
         "server"    = "https://kubernetes.default.svc"
       }
       "project" = "default"
