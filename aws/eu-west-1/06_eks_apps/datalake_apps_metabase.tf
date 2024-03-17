@@ -1,5 +1,20 @@
-resource "kubernetes_manifest" "application_argocd_metabase" {
+resource "kubernetes_manifest" "namespace_metabase" {
   manifest = {
+    "apiVersion" = "v1"
+    "kind"       = "Namespace"
+    "metadata"   = {
+      "labels" = {
+        "app"                        = var.metabase_namespace_name
+        "app.kubernetes.io/instance" = var.metabase_namespace_name
+        "app.kubernetes.io/name"     = var.metabase_namespace_name
+      }
+      "name" = var.metabase_namespace_name
+    }
+  }
+}
+resource "kubernetes_manifest" "application_argocd_metabase" {
+  depends_on = [module.metabase_k8s_external_secret]
+  manifest   = {
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind"       = "Application"
     "metadata"   = {
