@@ -1,6 +1,6 @@
 ## TODO: convert this to terraform module
 resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
-  depends_on = [module.metabase_k8s_external_secret]
+  depends_on = [module.metabase_db_k8s_external_secret]
   manifest   = {
     "apiVersion" = "batch/v1"
     "kind"       = "Job"
@@ -23,12 +23,12 @@ resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
               "envFrom" = [
                 {
                   "secretRef" = {
-                    "name" = local.rds_external_admin_db_secret_name
+                    "name" = local.rds_k8s_external_admin_db_secret_name
                   }
                 },
                 {
                   "secretRef" = {
-                    "name" = local.metabase_external_secret_name
+                    "name" = local.metabase_k8s_external_secret_name
                   }
                 },
               ]
@@ -71,6 +71,7 @@ resource "kubernetes_manifest" "namespace_metabase" {
     }
   }
 }
+
 resource "kubernetes_manifest" "application_argocd_metabase" {
   depends_on = [kubernetes_manifest.job_db_metabase_postgres_db_create_job]
   manifest   = {
@@ -114,37 +115,27 @@ resource "kubernetes_manifest" "application_argocd_metabase" {
             ]
             "values" = <<-EOT
             serviceAccount:
-              annotations:
-                eks.amazonaws.com/role-arn: "arn:aws:iam::730335474513:role/tf-datasquad-eks-metabase-app-irsa"
+            annotations:
+            eks.amazonaws.com/role-arn: "arn:aws:iam::730335474513:role/tf-datasquad-eks-metabase-app-irsa"
             database:
-              existingSecret: tf-metabase-db-secret
-              existingSecretConnectionURIKey: MB_DB_URL
-              existingSecretUsernameKey: MB_DB_USER
-              existingSecretPasswordKey: MB_DB_PASS
+            existingSecret: tf-metabase-db-secret
+            existingSecretConnectionURIKey: MB_DB_URL
+            existingSecretUsernameKey: MB_DB_USER
+            existingSecretPasswordKey: MB_DB_PASS
             ingress:
-              className: nginx
-              tls:
-                - secretName: letsencrypt-production
-                  hosts:
-                    - metabase.prod.datalake.garageeducation.org
+            className: nginx
+            tls:
+            - secretName: letsencrypt-production
+            hosts:
+            - metabase.prod.datalake.garageeducation.org
 
             EOT
           }
           "repoURL"        = "https://pmint93.github.io/helm-charts"
           "targetRevision" = "2.13.0"
-        },
-        {
-          "path"           = "./apps/metabase/"
-          "repoURL"        = "https://github.com/garage-education/DataSquadLab.git"
-          "targetRevision" = "HEAD"
-        },
+        }
       ]
-      "syncPolicy" = {
-        "automated"   = {}
-        "syncOptions" = [
-          "CreateNamespace=true",
-        ]
-      }
     }
   }
 }
+
