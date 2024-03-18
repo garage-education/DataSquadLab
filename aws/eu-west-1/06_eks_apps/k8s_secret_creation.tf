@@ -32,7 +32,7 @@ module "rds_admin_k8s_external_secret" {
 
   refresh_rate               = "1h"
   external_secret_store_name = kubernetes_manifest.k8s_secretstore_db_admin_external_store.manifest.metadata.name
-  namespace_name             = kubernetes_manifest.k8s_namespace_db.manifest.metadata.name
+  namespace_name             = kubernetes_namespace_v1.db.metadata[0].name
 
 }
 
@@ -60,5 +60,5 @@ module "metabase_db_k8s_external_secret" {
 
   refresh_rate               = "1h"
   external_secret_store_name = kubernetes_manifest.k8s_secretstore_db_admin_external_store.manifest.metadata.name
-  namespace_name             = kubernetes_manifest.k8s_namespace_db.manifest.metadata.name
+  namespace_name             = kubernetes_namespace_v1.db.metadata[0].name
 }
