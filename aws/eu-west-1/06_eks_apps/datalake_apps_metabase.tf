@@ -1,3 +1,62 @@
+## TODO: convert this to terraform module
+resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
+  depends_on = [module.metabase_k8s_external_secret]
+  manifest   = {
+    "apiVersion" = "batch/v1"
+    "kind"       = "Job"
+    "metadata"   = {
+      "name"      = "metabase-postgres-db-create-job"
+      "namespace" = var.db_namespace_name
+    }
+    "spec" = {
+      "template" = {
+        "spec" = {
+          "containers" = [
+            {
+              "args" = [
+                "psql -a -f /sql/init.sql -v database_user=$database_user -v database_password=$database_password -v database_name=$database_name",
+              ]
+              "command" = [
+                "sh",
+                "-c",
+              ]
+              "envFrom" = [
+                {
+                  "secretRef" = {
+                    "name" = local.rds_external_admin_db_secret_name
+                  }
+                },
+                {
+                  "secretRef" = {
+                    "name" = local.metabase_external_secret_name
+                  }
+                },
+              ]
+              "image"        = "postgres"
+              "name"         = "init-postgres"
+              "volumeMounts" = [
+                {
+                  "mountPath" = "/sql"
+                  "name"      = "sql-init"
+                },
+              ]
+            },
+          ]
+          "restartPolicy" = "OnFailure"
+          "volumes"       = [
+            {
+              "configMap" = {
+                "name" = "postgres-init-sql"
+              }
+              "name" = "sql-init"
+            },
+          ]
+        }
+      }
+    }
+  }
+}
+
 resource "kubernetes_manifest" "namespace_metabase" {
   manifest = {
     "apiVersion" = "v1"
@@ -13,7 +72,7 @@ resource "kubernetes_manifest" "namespace_metabase" {
   }
 }
 resource "kubernetes_manifest" "application_argocd_metabase" {
-  depends_on = [module.metabase_k8s_external_secret]
+  depends_on = [kubernetes_manifest.job_db_metabase_postgres_db_create_job]
   manifest   = {
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind"       = "Application"
