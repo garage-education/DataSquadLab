@@ -87,8 +87,7 @@ resource "kubernetes_manifest" "application_argocd_metabase" {
         "server"    = "https://kubernetes.default.svc"
       }
       "project" = "default"
-      "sources" = [
-        {
+      "source" = {
           "chart" = "metabase"
           "helm"  = {
             "parameters" = [
@@ -134,7 +133,6 @@ resource "kubernetes_manifest" "application_argocd_metabase" {
           "repoURL"        = "https://pmint93.github.io/helm-charts"
           "targetRevision" = "2.13.0"
         }
-      ]
     }
   }
 }
