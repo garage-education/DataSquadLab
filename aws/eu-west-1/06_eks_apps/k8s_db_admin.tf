@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "namespace_db" {
+resource "kubernetes_manifest" "k8s_namespace_db" {
   manifest = {
     "apiVersion" = "v1"
     "kind"       = "Namespace"
@@ -14,7 +14,7 @@ resource "kubernetes_manifest" "namespace_db" {
 }
 
 resource "kubernetes_manifest" "k8s_serviceaccount_db_rds_admin" {
-  depends_on = [kubernetes_manifest.namespace_db]
+  depends_on = [kubernetes_manifest.k8s_namespace_db]
   manifest   = {
     "apiVersion"                   = "v1"
     "automountServiceAccountToken" = true
@@ -28,11 +28,11 @@ resource "kubernetes_manifest" "k8s_serviceaccount_db_rds_admin" {
         "app.kubernetes.io/name"     = var.db_service_account_name
       }
       "name"      = var.db_service_account_name
-      "namespace" = kubernetes_manifest.namespace_db.manifest.metadata.name
+      "namespace" = kubernetes_manifest.k8s_namespace_db.manifest.metadata.name
     }
   }
 }
-#
+
 resource "kubernetes_manifest" "k8s_secretstore_db_admin_external_store" {
   depends_on = [kubernetes_manifest.k8s_serviceaccount_db_rds_admin]
   manifest   = {
@@ -40,7 +40,7 @@ resource "kubernetes_manifest" "k8s_secretstore_db_admin_external_store" {
     "kind"       = "SecretStore"
     "metadata"   = {
       "name"      = var.db_external_secret_store_name
-      "namespace" = kubernetes_manifest.namespace_db.manifest.metadata.name
+      "namespace" = kubernetes_manifest.k8s_namespace_db.manifest.metadata.name
     }
     "spec" = {
       "provider" = {
