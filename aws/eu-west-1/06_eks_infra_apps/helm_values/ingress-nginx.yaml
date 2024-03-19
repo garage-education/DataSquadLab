@@ -1,0 +1,20 @@
+## nginx configuration
+controller:
+  name: controller
+  enableAnnotationValidations: false
+  service:
+    # -- Enable controller services or not. This does not influence the creation of either the admission webhook or the metrics service.
+    enabled: true
+    external:
+      # -- Enable the external controller service or not. Useful for internal-only deployments.
+      enabled: true
+    # -- Annotations to be added to the external controller service. See `controller.service.internal.annotations` for annotations to be added to the internal controller service.
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-name: nginx-ingres-nlb
+
+    # -- Labels to be added to both controller services.
+    labels: {}
+    # -- Type of the external controller service.
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+    type: LoadBalancer
