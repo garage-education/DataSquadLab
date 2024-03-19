@@ -1,26 +1,26 @@
 resource "kubernetes_namespace_v1" "db" {
   metadata {
     labels = {
-      "app"                        = var.db_namespace_name
-      "app.kubernetes.io/instance" = var.db_namespace_name
-      "app.kubernetes.io/name"     = var.db_namespace_name
+      "app"                        = local.db_namespace_name
+      "app.kubernetes.io/instance" = local.db_namespace_name
+      "app.kubernetes.io/name"     = local.db_namespace_name
     }
-    name = var.db_namespace_name
+    name = local.db_namespace_name
   }
 }
 
 resource "kubernetes_service_account_v1" "db_admin_sa" {
   depends_on = [kubernetes_namespace_v1.db]
   metadata {
-    name        = var.db_service_account_name
+    name        = local.db_service_account_name
     namespace   = kubernetes_namespace_v1.db.metadata[0].name
     annotations = {
       "eks.amazonaws.com/role-arn" = "arn:aws:iam::730335474513:role/tf-datasquad-eks-rds-admin-irsa"
       #TODO: get this from outputs
     }
     labels = {
-      "app.kubernetes.io/instance" = var.db_service_account_name
-      "app.kubernetes.io/name"     = var.db_service_account_name
+      "app.kubernetes.io/instance" = local.db_service_account_name
+      "app.kubernetes.io/name"     = local.db_service_account_name
     }
   }
 }
@@ -31,7 +31,7 @@ resource "kubernetes_manifest" "k8s_secretstore_db_admin_external_store" {
     "apiVersion" = "external-secrets.io/v1beta1"
     "kind"       = "SecretStore"
     "metadata"   = {
-      "name"      = var.db_external_secret_store_name
+      "name"      = local.db_external_secret_store_name
       "namespace" = kubernetes_namespace_v1.db.metadata[0].name
     }
     "spec" = {
@@ -65,7 +65,7 @@ resource "kubernetes_manifest" "configmap_db_postgres_init_sql" {
     "kind"     = "ConfigMap"
     "metadata" = {
       "name"      = "postgres-init-sql"
-      "namespace" = var.db_namespace_name
+      "namespace" = local.db_namespace_name
     }
   }
 }
@@ -82,7 +82,7 @@ resource "kubernetes_manifest" "configmap_db_postgres_db_drop" {
     "kind"     = "ConfigMap"
     "metadata" = {
       "name"      = "postgres-db-drop"
-      "namespace" = var.db_namespace_name
+      "namespace" = local.db_namespace_name
     }
   }
 }
