@@ -4,6 +4,7 @@ from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
 
 def print_hello():
+    print("Hello From Github")
     return 'Hello World'
 
 default_args = {
