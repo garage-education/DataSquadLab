@@ -1,3 +1,10 @@
+locals {
+  metabase_k8s_namespace_name             = "metabase"
+  metabase_k8s_service_account_name       = "tf-datasquad-eks-metabase-sa"
+  metabase_k8s_external_secret_store_name = "tf-datasquad-metabase-db-store"
+  metabase_aws_external_secret_name       = "tf-metabase-db-secret"
+  metabase_k8s_external_secret_name       = "${local.name_prefix}-metabase-external-secret"
+}
 ## TODO: convert this to terraform module
 resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
   depends_on = [module.metabase_db_k8s_external_secret]
@@ -6,7 +13,7 @@ resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
     "kind"       = "Job"
     "metadata"   = {
       "name"      = "metabase-postgres-db-create-job"
-      "namespace" = var.db_namespace_name
+      "namespace" = local.db_namespace_name
     }
     "spec" = {
       "template" = {
@@ -60,25 +67,26 @@ resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
 resource "kubernetes_namespace_v1" "metabase" {
   metadata {
     labels = {
-      "app"                        = var.metabase_namespace_name
-      "app.kubernetes.io/instance" = var.metabase_namespace_name
-      "app.kubernetes.io/name"     = var.metabase_namespace_name
+      "app"                        = local.metabase_k8s_namespace_name
+      "app.kubernetes.io/instance" = local.metabase_k8s_namespace_name
+      "app.kubernetes.io/name"     = local.metabase_k8s_namespace_name
     }
-    name = var.metabase_namespace_name
+    name = local.metabase_k8s_namespace_name
   }
 }
 
 resource "kubernetes_service_account_v1" "metabase_service_account" {
   depends_on = [kubernetes_namespace_v1.metabase]
   metadata {
-    name        = var.metabase_service_account_name
-    namespace   = var.metabase_namespace_name
+    name        = local.metabase_k8s_service_account_name
+    namespace   = local.metabase_k8s_namespace_name
     annotations = {
-      "eks.amazonaws.com/role-arn" = "arn:aws:iam::730335474513:role/tf-datasquad-eks-metabase-app-irsa" #TODO: get this from outputs
+      "eks.amazonaws.com/role-arn" = "arn:aws:iam::730335474513:role/tf-datasquad-eks-metabase-app-irsa"
+      #TODO: get this from outputs
     }
     labels = {
-      "app.kubernetes.io/instance" = var.metabase_service_account_name
-      "app.kubernetes.io/name"     = var.metabase_service_account_name
+      "app.kubernetes.io/instance" = local.metabase_k8s_service_account_name
+      "app.kubernetes.io/name"     = local.metabase_k8s_service_account_name
     }
   }
 }
@@ -89,7 +97,7 @@ resource "kubernetes_manifest" "k8s_secretstore_metabase_external_store" {
     "apiVersion" = "external-secrets.io/v1beta1"
     "kind"       = "SecretStore"
     "metadata"   = {
-      "name"      = var.metabase_external_secret_store_name
+      "name"      = local.metabase_k8s_external_secret_store_name
       "namespace" = kubernetes_namespace_v1.metabase.metadata[0].name
     }
     "spec" = {
@@ -137,7 +145,6 @@ module "metabase_db_metabase_k8s_external_secret" {
   external_secret_store_name = kubernetes_manifest.k8s_secretstore_metabase_external_store.manifest.metadata.name
   namespace_name             = kubernetes_namespace_v1.metabase.metadata[0].name
 }
-
 
 resource "kubernetes_manifest" "application_argocd_metabase" {
   depends_on = [
