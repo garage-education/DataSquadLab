@@ -5,17 +5,17 @@ data "aws_availability_zones" "available" {}
 
 data "terraform_remote_state" "eks" {
   backend = "s3"
-  config = {
+  config  = {
     bucket = "datasquad-terraform-state-backend"
-    key = "04_eks/terraform.tfstate"
+    key    = "04_eks/terraform.tfstate"
     region = "eu-west-1"
   }
 }
-data "terraform_remote_state" "rds" {
+data "terraform_remote_state" "db_admin" {
   backend = "s3"
-  config = {
+  config  = {
     bucket = "datasquad-terraform-state-backend"
-    key = "04_rds/terraform.tfstate"
+    key    = "17_eks_db_admin/terraform.tfstate"
     region = "eu-west-1"
   }
 }
