@@ -1,84 +1,33 @@
-## TODO: convert this to terraform module
-resource "kubernetes_manifest" "job_db_metabase_postgres_db_create_job" {
-  depends_on = [module.metabase_db_k8s_external_secret]
-  manifest   = {
-    "apiVersion" = "batch/v1"
-    "kind"       = "Job"
-    "metadata"   = {
-      "name"      = "metabase-postgres-db-create-job"
-      "namespace" = var.db_namespace_name
-    }
-    "spec" = {
-      "template" = {
-        "spec" = {
-          "containers" = [
-            {
-              "args" = [
-                "psql -a -f /sql/init.sql -v database_user=$database_user -v database_password=$database_password -v database_name=$database_name",
-              ]
-              "command" = [
-                "sh",
-                "-c",
-              ]
-              "envFrom" = [
-                {
-                  "secretRef" = {
-                    "name" = local.rds_k8s_external_admin_db_secret_name
-                  }
-                },
-                {
-                  "secretRef" = {
-                    "name" = local.metabase_k8s_external_secret_name
-                  }
-                },
-              ]
-              "image"        = "postgres"
-              "name"         = "init-postgres"
-              "volumeMounts" = [
-                {
-                  "mountPath" = "/sql"
-                  "name"      = "sql-init"
-                },
-              ]
-            },
-          ]
-          "restartPolicy" = "OnFailure"
-          "volumes"       = [
-            {
-              "configMap" = {
-                "name" = "postgres-init-sql"
-              }
-              "name" = "sql-init"
-            },
-          ]
-        }
-      }
-    }
-  }
+locals {
+  k8s_metabase_external_secret_store_name = "${local.name_prefix}-${local.k8s_metabase_namespace}-secret-store"
+  k8s_metabase_external_secret_name       = "${local.name_prefix}-${local.name_prefix}-external-secret"
+
+  aws_metabase_secret_manager_name        = data.terraform_remote_state.db_admin.outputs.metabase_db_secret_name
+
 }
 
 resource "kubernetes_namespace_v1" "metabase" {
   metadata {
     labels = {
-      "app"                        = var.metabase_namespace_name
-      "app.kubernetes.io/instance" = var.metabase_namespace_name
-      "app.kubernetes.io/name"     = var.metabase_namespace_name
+      "app"                        = local.k8s_metabase_namespace
+      "app.kubernetes.io/instance" = local.k8s_metabase_namespace
+      "app.kubernetes.io/name"     = local.k8s_metabase_namespace
     }
-    name = var.metabase_namespace_name
+    name = local.k8s_metabase_namespace
   }
 }
 
 resource "kubernetes_service_account_v1" "metabase_service_account" {
   depends_on = [kubernetes_namespace_v1.metabase]
   metadata {
-    name        = var.metabase_service_account_name
-    namespace   = var.metabase_namespace_name
+    name        = local.k8s_metabase_service_account_name
+    namespace   = local.k8s_metabase_namespace
     annotations = {
-      "eks.amazonaws.com/role-arn" = "arn:aws:iam::730335474513:role/tf-datasquad-eks-metabase-app-irsa" #TODO: get this from outputs
+      "eks.amazonaws.com/role-arn" = module.metabase_app_external_secret_irsa.iam_role_arn
     }
     labels = {
-      "app.kubernetes.io/instance" = var.metabase_service_account_name
-      "app.kubernetes.io/name"     = var.metabase_service_account_name
+      "app.kubernetes.io/instance" = local.k8s_metabase_service_account_name
+      "app.kubernetes.io/name"     = local.k8s_metabase_service_account_name
     }
   }
 }
@@ -89,7 +38,7 @@ resource "kubernetes_manifest" "k8s_secretstore_metabase_external_store" {
     "apiVersion" = "external-secrets.io/v1beta1"
     "kind"       = "SecretStore"
     "metadata"   = {
-      "name"      = var.metabase_external_secret_store_name
+      "name"      = local.k8s_metabase_external_secret_store_name
       "namespace" = kubernetes_namespace_v1.metabase.metadata[0].name
     }
     "spec" = {
@@ -113,21 +62,21 @@ resource "kubernetes_manifest" "k8s_secretstore_metabase_external_store" {
 module "metabase_db_metabase_k8s_external_secret" {
   depends_on           = [kubernetes_manifest.k8s_secretstore_metabase_external_store]
   source               = "../../../k8s/modules/db_provisioner"
-  external_secret_name = local.metabase_k8s_external_secret_name
+  external_secret_name = local.k8s_metabase_external_secret_name
   secret_map           = [
     {
-      external_sm_name     = local.metabase_aws_external_secret_name
-      external_sm_name_key = "MB_DB_USER"
+      external_sm_name     = local.aws_metabase_secret_manager_name
+      external_sm_name_key = "username"
       k8s_property_key     = "MB_DB_USER"
     },
     {
-      external_sm_name     = local.metabase_aws_external_secret_name
-      external_sm_name_key = "MB_DB_PASS"
+      external_sm_name     = local.aws_metabase_secret_manager_name
+      external_sm_name_key = "password"
       k8s_property_key     = "MB_DB_PASS"
     },
     {
-      external_sm_name     = local.metabase_aws_external_secret_name
-      external_sm_name_key = "MB_DB_URL"
+      external_sm_name     = local.aws_metabase_secret_manager_name
+      external_sm_name_key = "jdbc_url"
       k8s_property_key     = "MB_DB_URL"
     }
 
@@ -138,10 +87,9 @@ module "metabase_db_metabase_k8s_external_secret" {
   namespace_name             = kubernetes_namespace_v1.metabase.metadata[0].name
 }
 
-
 resource "kubernetes_manifest" "application_argocd_metabase" {
   depends_on = [
-    kubernetes_manifest.job_db_metabase_postgres_db_create_job, kubernetes_service_account_v1.metabase_service_account,
+    kubernetes_service_account_v1.metabase_service_account,
     module.metabase_db_metabase_k8s_external_secret
   ]
   manifest = {
@@ -184,7 +132,7 @@ resource "kubernetes_manifest" "application_argocd_metabase" {
           ]
           "values" = <<-EOT
             database:
-              existingSecret: ${local.metabase_k8s_external_secret_name}
+              existingSecret: ${local.k8s_metabase_external_secret_name}
               existingSecretConnectionURIKey: MB_DB_URL
               existingSecretUsernameKey: MB_DB_USER
               existingSecretPasswordKey: MB_DB_PASS
@@ -202,4 +150,3 @@ resource "kubernetes_manifest" "application_argocd_metabase" {
     }
   }
 }
-

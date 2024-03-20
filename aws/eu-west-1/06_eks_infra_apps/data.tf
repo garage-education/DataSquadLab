@@ -11,3 +11,11 @@ data "terraform_remote_state" "eks" {
     region = "eu-west-1"
   }
 }
+data "terraform_remote_state" "rds" {
+  backend = "s3"
+  config = {
+    bucket = "datasquad-terraform-state-backend"
+    key = "04_rds/terraform.tfstate"
+    region = "eu-west-1"
+  }
+}
