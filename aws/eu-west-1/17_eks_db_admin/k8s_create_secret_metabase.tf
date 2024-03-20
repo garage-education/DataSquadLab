@@ -1,7 +1,7 @@
 locals {
   k8s_metabase_namespace            = "metabase"
   k8s_metabase_external_secret_name = "${local.name_prefix}-${local.k8s_metabase_namespace}-external-secret"
-  aws_metabase_secret_manager_name = "${local.name_prefix}-db-${local.k8s_metabase_namespace}-secret"
+  aws_metabase_secret_manager_name  = "${local.name_prefix}-db-${local.k8s_metabase_namespace}-secret"
 
   metabase_db_secrets = {
     engine   = data.terraform_remote_state.rds.outputs.db_instance_engine,
@@ -10,7 +10,7 @@ locals {
     password = random_string.metabase_db_password.result
     dbname   = local.k8s_metabase_namespace,
     port     = data.terraform_remote_state.rds.outputs.db_instance_port,
-    jdbc_url = "jdbc:${data.terraform_remote_state.rds.outputs.db_instance_engine}://${data.terraform_remote_state.rds.outputs.db_instance_address}/${local.k8s_metabase_namespace}"
+    jdbc_url = "jdbc:postgresql://${data.terraform_remote_state.rds.outputs.db_instance_address}/${local.k8s_metabase_namespace}"
   }
 }
 
