@@ -9,7 +9,8 @@ locals {
     username = "metabase_admin",
     password = random_string.metabase_db_password.result
     dbname   = local.k8s_metabase_namespace,
-    port     = data.terraform_remote_state.rds.outputs.db_instance_port
+    port     = data.terraform_remote_state.rds.outputs.db_instance_port,
+    jdbc_url = "jdbc:${data.terraform_remote_state.rds.outputs.db_instance_engine}://${data.terraform_remote_state.rds.outputs.db_instance_address}/${local.k8s_metabase_namespace}"
   }
 }
 
