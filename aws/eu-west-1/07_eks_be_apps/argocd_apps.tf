@@ -1,5 +1,4 @@
 resource "kubernetes_manifest" "application_argocd_petclinic" {
-  depends_on = [helm_release.argo_cd]
   manifest = {
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind" = "Application"
