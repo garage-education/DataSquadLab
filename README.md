@@ -123,3 +123,8 @@ This is your one-stop shop to learn how to build a scalable and secure cloud pla
 	- [ ] Prometheus
 	- [ ] Loki
 	- [ ] Airflow
+    - [ ] Security:
+      - [ ] Consolidate everything to use KMS and one KMS per account. (SM, RDS, Redshift)
+      - [ ] Revamp IRSA to not grant KMS
+      - [ ] Merge the RDS admin SM.
+      - [ ] Limit the service that can access each secret manager not only the iam role
