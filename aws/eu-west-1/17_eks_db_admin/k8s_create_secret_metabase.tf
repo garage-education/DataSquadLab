@@ -24,7 +24,7 @@ resource "random_string" "metabase_db_password" {
   }
 }
 
-#TODO: add these to ouput
+#TODO: add these to output
 module "metabase_aws_secrets_manager" {
   depends_on = [random_string.metabase_db_password]
   source     = "terraform-aws-modules/secrets-manager/aws"
@@ -32,7 +32,7 @@ module "metabase_aws_secrets_manager" {
   # Secret
   name                    = local.aws_metabase_secret_manager_name
   description             = "${local.name_prefix}-db-${local.k8s_metabase_namespace}-secret Secrets Manager secret"
-  recovery_window_in_days = 0
+  recovery_window_in_days = 7
 
   # Policy
   create_policy       = true
@@ -83,7 +83,6 @@ module "metabase_db_k8s_external_secret" {
     }
   ] #TODO: to find a way to remove the password from the logs
 
-  refresh_rate               = "1h"
   external_secret_store_name = kubernetes_manifest.k8s_secretstore_db_admin_external_store.manifest.metadata.name
   namespace_name             = kubernetes_namespace_v1.db.metadata[0].name
 }
