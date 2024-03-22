@@ -1,6 +1,6 @@
 locals {
   k8s_metabase_external_secret_store_name = "${local.name_prefix}-${local.k8s_metabase_namespace}-secret-store"
-  k8s_metabase_external_secret_name       = "${local.name_prefix}-${local.k8s_metabase_external_secret_store_name}-external-secret"
+  k8s_metabase_external_secret_name       = "${local.name_prefix}-${local.k8s_metabase_namespace}-external-secret"
 
   aws_metabase_secret_manager_name        = data.terraform_remote_state.db_admin.outputs.metabase_db_secret_name
 
