@@ -1,0 +1,21 @@
+locals {
+  name_prefix                       = "${var.prefix}${var.name}-eks"
+  k8s_airflow_namespace            = "airflow"
+  k8s_airflow_service_account_name = "${local.name_prefix}-${local.k8s_airflow_namespace}-external-secret-sa"
+
+  env                               = {
+    account_id  = data.aws_caller_identity.current.account_id
+    region      = data.aws_region.current.name
+    environment = var.environment
+  }
+
+  default_tags = {
+    Region      = data.aws_region.current.name
+    Environment = var.environment
+    Owner       = "INFRA_TEAM"
+    Project     = "DATALAKE"
+    Stage       = "KUBERNETES"
+    ManagedBy   = var.ManagedBy
+    CostCenter  = "DATALAKE"
+  }
+}
