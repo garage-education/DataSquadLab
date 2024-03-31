@@ -13,9 +13,9 @@ locals {
     Region      = data.aws_region.current.name
     Environment = var.environment
     Owner       = "INFRA_TEAM"
-    Project     = "INFRA_PROJECT"
+    Project     = "DATALAKE"
     Stage       = "KUBERNETES"
     ManagedBy   = var.ManagedBy
-    CostCenter  = "APP"
+    CostCenter  = "DATALAKE"
   }
 }
