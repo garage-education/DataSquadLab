@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "datasquad-terraform-state-backend"
-    key = "04_rds/terraform.tfstate"
+    key    = "22_eks_apps/terraform.tfstate"
     region = "eu-west-1"
   }
 }
