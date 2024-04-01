@@ -3,11 +3,11 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
 
-data "terraform_remote_state" "vpc" {
+data "terraform_remote_state" "kms" {
   backend = "s3"
   config = {
     bucket = "datasquad-terraform-state-backend"
-    key    = "00_foundations/terraform.tfstate"
+    key    = "02_kms/terraform.tfstate"
     region = "eu-west-1"
   }
 }

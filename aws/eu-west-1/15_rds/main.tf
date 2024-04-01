@@ -4,7 +4,7 @@
 module "db" {
   source = "terraform-aws-modules/rds/aws"
 
-  identifier = local.name_prefix
+  identifier                     = local.name_prefix
   instance_use_identifier_prefix = false
 
   # All available versions: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts
@@ -30,7 +30,7 @@ module "db" {
   master_user_password_rotate_immediately           = false
   master_user_password_rotation_schedule_expression = "rate(30 days)"
 
-  multi_az               = false
+  multi_az = false
 
   create_db_subnet_group      = true
   db_subnet_group_name        = local.name_prefix_subnet_group
@@ -57,7 +57,7 @@ module "db" {
   monitoring_role_name                  = "${local.name_prefix}-role"
   monitoring_role_use_name_prefix       = true
   monitoring_role_description           = "Description for monitoring role"
-  kms_key_id = module.kms.key_arn
-  tags = local.default_tags
+  kms_key_id                            = data.terraform_remote_state.kms.outputs.data_kms_key_arn
+  tags                                  = local.default_tags
 
 }

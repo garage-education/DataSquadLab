@@ -27,7 +27,7 @@ module "dms_replication_instance" {
   repl_instance_class                        = "dms.t3.small"
   repl_instance_id                           = local.name_prefix
   repl_instance_vpc_security_group_ids       = [module.dms_security_group["postgresql-source"].security_group_id]
-  repl_instance_kms_key_arn                  = module.db_kms.key_arn
+  repl_instance_kms_key_arn                  = data.terraform_remote_state.kms.outputs.data_kms_key_arn
 
 
   # Access role
