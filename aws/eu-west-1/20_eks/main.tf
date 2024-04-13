@@ -15,6 +15,7 @@ module "eks" {
 
   create_cni_ipv6_iam_policy = true
 
+  # cloudwatch_log_group_kms_key_id
   cluster_addons = {
     coredns = {
       most_recent = true
@@ -59,7 +60,6 @@ module "eks" {
       desired_size               = var.eks_desired_size
 
       disk_size = var.eks_nodes_disk_size
-
 
       tags = merge(local.default_tags, {
         Name = "tf-datasquad-eks-default-node-group"

@@ -4,6 +4,7 @@ variable "owner" {}
 variable "environment" {}
 variable "region" {}
 variable "ManagedBy" {}
+variable "vpc_cidr" {}
 variable "ami_type" {
   default = "AL2_x86_64"
 }
