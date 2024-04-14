@@ -1,12 +1,22 @@
-####
-resource "helm_release" "argo_cd" {
-  name             = "argo-cd"
-  repository       = "https://argoproj.github.io/argo-helm"
-  chart            = "argo-cd"
-  namespace        = "argocd"
-  version          = "6.7.2"
-  create_namespace = true
-  values           = [
-    file("helm_values/argocd.yaml")
-  ]
+resource "kubernetes_manifest" "application_argocd_infra" {
+  manifest = {
+    "apiVersion" = "argoproj.io/v1alpha1"
+    "kind" = "Application"
+    "metadata" = {
+      "name" = "app-of-apps"
+      "namespace" = "argocd"
+    }
+    "spec" = {
+      "destination" = {
+        "namespace" = "argocd"
+        "name" = "in-cluster"
+      }
+      "project" = "default"
+      "source" = {
+        "path" = "./apps/argocd"
+        "repoURL" = "https://github.com/garage-education/DataSquadLab.git"
+        "targetRevision" = "HEAD"
+      }
+    }
+  }
 }
