@@ -3,17 +3,17 @@ resource "kubernetes_manifest" "application_argocd_petclinic" {
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind" = "Application"
     "metadata" = {
-      "name" = "petclinic"
+      "name" = "app-of-apps"
       "namespace" = "argocd"
     }
     "spec" = {
       "destination" = {
-        "namespace" = "petclinic"
-        "server" = "https://kubernetes.default.svc"
+        "namespace" = "argocd"
+        "name" = "in-cluster"
       }
       "project" = "default"
       "source" = {
-        "path" = "./apps/petclinic/"
+        "path" = "./apps/argocd/"
         "repoURL" = "https://github.com/garage-education/DataSquadLab.git"
         "targetRevision" = "HEAD"
       }
