@@ -15,7 +15,10 @@ resource "kubernetes_manifest" "application_argocd_infra" {
       "source" = {
         "path" = "./apps/argocd"
         "repoURL" = "https://github.com/garage-education/DataSquadLab.git"
-        "targetRevision" = "HEAD"
+        "targetRevision" = "argocd/revamp" # TODO: Before merging change to HEAD
+      }
+      "syncPolicy": {
+        "automated": {}
       }
     }
   }
