@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://charts.jetstack.io'
+      chart: 'cert-manager'
+      targetRevision: '1.13.3'
+      helm:
+        parameters:
+          - name: installCRDs
+            value: 'true'
+    - repoURL: 'https://github.com/garage-education/DataSquadLab.git'
+      path: ./apps/cert-manager
+      targetRevision: HEAD
+  destination:
+    name: in-cluster
+    namespace: cert-manager
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
